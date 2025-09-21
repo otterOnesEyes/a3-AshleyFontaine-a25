@@ -10,13 +10,6 @@ const http = require( "http" ),
       dir  = "public/",
       port = 3000
 
-// Example data to be available when the server is started
-const appdata = [
-  { "player": "Player1", "password": "123", "score": 1000000, "grade": "MASTER", "combo": 1000, "marvelous": 1000, "great": 0, "good": 0, "miss": 0, "completion": "All Marvelous"},
-  { "player": "Player2", "password": "123", "score": 995680, "grade": "SSS+", "combo": 1000, "marvelous": 984, "great": 15, "good": 1, "miss": 0, "completion": "Full Combo"},
-  { "player": "Player3", "password": "123", "score": 0, "grade": "D", "combo": 0, "marvelous": 0, "great": 0, "good": 0, "miss": 1000, "completion": "Not Clear"},
-]
-
 const client = new MongoClient(uri, {
   serverApi: {
     version: ServerApiVersion.v1,
@@ -69,6 +62,7 @@ const handlePost = function( request, response ) {
         if(appdata[i].player == jsObject.player){
           if(appdata[i].password == jsObject.password){
             // If player name and password match, update with new data.
+            
             foundEntry = true
             const entry = appdata[i]
 
@@ -137,22 +131,21 @@ const handlePost = function( request, response ) {
 
 // Build a leaderboard to be set as the innerHTML of a table.
 const constructLeaderboard = function () {
-  getData()
+  entries = getData().sort({"score":1})
   // Begin by sorting the entries by score
-  appdata.sort((a, b) => b.score - a.score)
 
   // Table header line
   lb = "<tr id=lbhead><th>Rank</th><th>Player</th><th>Score</th><th>Grade</th><th>Combo</th><th>Complete</th></tr>"
   // Convert each entry into HTML table text
   for(let i = 0; i < appdata.length; i++){
-    e = appdata[i]
+    e = entries[i]
     lb += "<tr><td>" +
           (i+1) + "</td><td>" +
           e.player + "</td><td>" +
           e.score + "</td><td>" +
           e.grade + "</td><td>" +
           e.combo + "</td><td>" +
-          e.completion +
+          e.complete +
           "</td></tr>"
   }
   return lb
@@ -232,15 +225,14 @@ const sendLB = function (response) {
 
 async function getData(){
   try {
-    await client.connect()
-    await client.db("admin").command({ ping:1 })
-    console.log("Database pinged")
+    await client.connect();
+    lb = client.db("lb");
+    entries = lb.getCollection("entries")
   }
   finally {
     await client.close()
+    return entries
   }
 }
-
-getData().catch(console.dir)
 
 server.listen( process.env.PORT || port )
