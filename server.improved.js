@@ -231,10 +231,16 @@ const sendLB = function (response) {
 }
 
 async function getData(){
-  await client.connect()
-  await client.db("admin").command({ ping:1 })
-  console.log("Database pinged")
-  await client.close()
+  try {
+    await client.connect()
+    await client.db("admin").command({ ping:1 })
+    console.log("Database pinged")
+  }
+  finally {
+    await client.close()
+  }
 }
+
+getData.catch(console.dir)
 
 server.listen( process.env.PORT || port )
