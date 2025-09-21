@@ -241,6 +241,6 @@ async function getData(){
   }
 }
 
-getData.catch(console.dir)
+getData().catch(console.dir)
 
 server.listen( process.env.PORT || port )
