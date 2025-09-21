@@ -1,0 +1,82 @@
+  <!doctype html>
+  <html lang="en">
+    <head>
+      <title>CS4241 Assignment 2</title>
+      <meta charset="utf-8">
+      <script src="js/main.js"></script>
+      <link rel="stylesheet" href="css/main.css">
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link href="https://fonts.googleapis.com/css2?family=Knewave&family=Lexend:wght@100..900&display=swap" rel="stylesheet">
+      <!-- get rid of favicon error -->
+      <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+    </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>Leaderboard Tracker for WACCA</h1><br>
+        <p id="desc">
+          WACCA is an arcade rhythm game that encourages competition to see which players can
+          attain the highest scores. This website allows users to enter, edit, or delete their scores
+          from a leaderboard.
+          <br><br>
+          This particular example would be for a level with a maximum combo of 1000.
+        </p>
+      </div>
+      <div class="forms">
+        <div class="form">
+          <h2>Create/Edit Entry</h2>
+          <p>Input your username, score, combo, and accuracy.<br>
+          Set a password to update or delete your entry later!</p>
+          <form>
+            <label for="eusername">Username</label>
+            <input type="text" id="eusername">
+            <br>
+            <label for="epassword">Password</label>
+            <input type="password" id="epassword">
+            <br>
+            <label for="score">Score</label>
+            <input type="number" id="score" value="0" min="0" max="1000000">
+            <br>
+            <label for="combo">Max Combo</label>
+            <input type="number" id="combo" value="0" min="0" max="1000">
+            <br>
+            <br>
+            <p>Accuracy Breakdown</p>
+            <span class="accuracyLabel">Marvelous</span>
+            <span class="accuracyLabel">Great</span>
+            <span class="accuracyLabel">Good</span>
+            <span class="accuracyLabel">Miss</span>
+            <br>
+            <input type="number" id="marvelous" value="0" min="0" max="1000">
+            <input type="number" id="great" value="0" min="0" max="1000">
+            <input type="number" id="good" value="0" min="0" max="1000">
+            <input type="number" id="miss" value="0" min="0" max="1000">
+            <br><br>
+            <button id="entrybutton">Submit</button>
+          </form>
+        </div>
+          <br>
+          <div class="form">
+            <h2>Delete Entry</h2>
+            <p>Input the username of the entry to delete.<br>
+            You cannot delete an entry without that user's password!</p>
+            <form>
+              <label for="dusername">Username</label>
+              <input type="text" id="dusername">
+              <br>
+              <label for="dpassword">Password</label>
+              <input type="password" id="dpassword">
+              <br><br>
+              <button id="deletebutton">Submit</button>
+            </form>
+          </div>
+      </div>
+      <div class="leaderboard">
+        <table id="leaderboard">
+          <tr><td><button id="loadbutton">Load Leaderboard</button></td></tr>
+        </table>
+      </div>
+    </div>
+  </body>
+</html>
