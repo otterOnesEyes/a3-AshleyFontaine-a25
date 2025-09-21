@@ -5,7 +5,7 @@ const http = require( "http" ),
       // However, Glitch will install it automatically by looking in your package.json
       // file.
       mime = require( "mime" ),
-      { mongoClient, ServerApiVersion } = require( "mongodb" ),
+      { MongoClient, ServerApiVersion } = require( "mongodb" ),
       uri = "mongodb+srv://madafon964:@Tf9645555@cs4241a3.4kysvlz.mongodb.net/?retryWrites=true&w=majority&appName=CS4241a3",
       dir  = "public/",
       port = 3000
@@ -56,6 +56,7 @@ const handlePost = function( request, response ) {
   request.on( "end", function() {
     console.log( JSON.parse( dataString ) )
     jsObject = JSON.parse( dataString )
+    getData()
     if(request.url === "/entry"){
 
       // Derived field calculations
@@ -63,7 +64,6 @@ const handlePost = function( request, response ) {
       const completion = evalComplete(jsObject.marvelous, jsObject.great, jsObject.good, jsObject.miss)
 
       // Search for the existing entry.
-      getData()
       let foundEntry = false
       for(let i = 0 ; i < appdata.length; i++){
         if(appdata[i].player == jsObject.player){
@@ -137,6 +137,7 @@ const handlePost = function( request, response ) {
 
 // Build a leaderboard to be set as the innerHTML of a table.
 const constructLeaderboard = function () {
+  getData()
   // Begin by sorting the entries by score
   appdata.sort((a, b) => b.score - a.score)
 
