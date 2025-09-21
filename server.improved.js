@@ -6,7 +6,7 @@ const http = require( "http" ),
       // file.
       mime = require( "mime" ),
       { MongoClient, ServerApiVersion } = require( "mongodb" ),
-      uri = "mongodb+srv://madafon964:@@Tf9645555@cs4241a3.4kysvlz.mongodb.net/?retryWrites=true&w=majority&appName=CS4241a3",
+      uri = "mongodb+srv://madafon964:xNsJN5PFpWIlWYuB@leaderboard.nhvpgie.mongodb.net/?retryWrites=true&w=majority&appName=leaderboard",
       dir  = "public/",
       port = 3000
 
