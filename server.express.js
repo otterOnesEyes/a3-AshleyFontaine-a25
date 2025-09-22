@@ -58,12 +58,12 @@ const middleware_post = (req, res, next) => {
             } else if (req.url === "/delete"){
                 // Search for an existing entry
                 let foundEntry = false
-                for(let i = 0 ; i < appdata.length; i++){
-                    if(appdata[i].player == jsObject.player){
+                for(let i = 0 ; i < leaderboard.length; i++){
+                    if(leaderboard[i].player == json.player){
                         foundEntry = true
-                        if(appdata[i].password == jsObject.password){
+                        if(leaderboard[i].password == json.password){
                             // Remove entry if password is correct
-                            appdata.splice(i, 1)
+                            leaderboard.splice(i, 1)
                         } else {
                             console.log("Incorrect Password!")
                         }
