@@ -23,13 +23,56 @@ const middleware_post = (req, res, next) => {
             const json = JSON.parse( dataString )
             json.grade = gradeScore(json.score)
 
-            leaderboard.push(json)
+            if(req.url === "/entry"){
+                // Search for the existing entry.
+                let foundEntry = false
+                for(let i = 0 ; i < leaderboard.length; i++){
+                    if(leaderboard[i].username == json.username){
+                        if(leaderboard[i].password == json.password){
+                            // If player name and password match, update with new data.
+                            
+                            foundEntry = true
+                            const entry = leaderboard[i]
 
-            console.log(json)
-            console.log("After addition")
-            console.log(leaderboard)
-            // ideally want to put this into the mongo
+                            entry.score = json.score
+                            entry.grade = json.grade
+                            entry.combo = json.combo
+                            entry.completion = json.completion
 
+                            // ideally want to put this into the mongo
+
+
+                        } else {
+                            // If password doesn't match, cancel the whole operation
+                            console.log("Incorrect Password!")
+                            return
+                        }
+                    }
+                }
+                if(!foundEntry){
+                    // Create and add new entry
+                    leaderboard.push(json)
+                    
+                    // ideally want to put this into the mongo
+                }
+            } else if (req.url === "/delete"){
+                // Search for an existing entry
+                let foundEntry = false
+                for(let i = 0 ; i < appdata.length; i++){
+                    if(appdata[i].player == jsObject.player){
+                        foundEntry = true
+                        if(appdata[i].password == jsObject.password){
+                            // Remove entry if password is correct
+                            appdata.splice(i, 1)
+                        } else {
+                            console.log("Incorrect Password!")
+                        }
+                    }
+                }
+                if(!foundEntry){
+                    console.log("User not found")
+                }
+            }
             next()
         })
     } else {
@@ -41,8 +84,11 @@ app.use(middleware_post)
 
 app.post("/entry", ( req, res ) => {
     res.writeHead( 200, { 'Content-Type': 'application/json'})
-    console.log("before final")
-    console.log(leaderboard)
+    res.end( constructLeaderboard() )
+})
+
+app.post("/delete", (req, res) => {
+    res.writeHead( 200, { 'Content-Type': 'application/json'})
     res.end( constructLeaderboard() )
 })
 
