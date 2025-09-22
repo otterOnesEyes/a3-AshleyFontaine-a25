@@ -5,6 +5,8 @@ const http = require( "http" ),
       // However, Glitch will install it automatically by looking in your package.json
       // file.
       mime = require( "mime" ),
+      express = require( 'express' ),
+      app = express(),
       { MongoClient, ServerApiVersion } = require( "mongodb" ),
       uri = "mongodb+srv://madafon964:xNsJN5PFpWIlWYuB@leaderboard.nhvpgie.mongodb.net/?retryWrites=true&w=majority&appName=leaderboard",
       dir  = "public/",
@@ -230,7 +232,6 @@ async function getData(){
     entries = lb.getCollection("entries")
   }
   finally {
-    await client.close()
     return entries
   }
 }
