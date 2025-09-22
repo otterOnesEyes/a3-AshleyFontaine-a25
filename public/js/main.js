@@ -12,7 +12,7 @@ const submit = async function( event ) {
         pwdinput = document.querySelector( '#epassword' ),
         scoreinput = document.querySelector( '#score' ),
         comboinput = document.querySelector( '#combo' ),
-        completeinput = document.getElementById('#entryForm').elements["completion"],
+        completeinput = document.querySelector('#entryForm').elements["completion"],
         json = { username: uninput.value, 
                  password: pwdinput.value, 
                  score: scoreinput.value,
