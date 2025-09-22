@@ -8,6 +8,42 @@ const express = require( 'express' ),
                       "combo":1000,
                       "complete":"All Marvelous"}]
 
+const { MongoClient, ServerApiVersion } = require('mongodb');
+const uri = `mongodb+srv://${process.env.USERNM}:${process.env.PASS}@${process.env.HOST}/?retryWrites=true&w=majority&appName=Cluster0`;
+
+const client = new MongoClient(uri, {
+  serverApi: {
+    version: ServerApiVersion.v1,
+    strict: true,
+    deprecationErrors: true,
+  }
+});
+
+let collection = null
+
+async function run() {
+  try {
+    await client.connect(
+	err => {
+		console.log("err :", err);
+		client.close();
+	}
+
+    );  
+    collection = client.db("lb").collection("entries");
+    console.log(collection.find({}).toArray())
+    // Send a ping to confirm a successful connection
+    await client.db("lb").command({ ping: 1 });
+    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+
+ } finally {
+    // Ensures that the client will close when you finish/error
+    await client.close();
+  }
+}
+
+run().catch(console.dir);
+
 app.use( express.static( 'public' ) )
 
 const middleware_post = (req, res, next) => {
