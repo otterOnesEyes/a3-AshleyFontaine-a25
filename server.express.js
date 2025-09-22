@@ -22,6 +22,8 @@ const middleware_post = (req, res, next) => {
 
         req.on( 'end', function() {
             const json = JSON.parse( dataString )
+            json.grade = gradeScore(jsObject.score)
+
             leaderboard.push(json)
 
             console.log(json)
@@ -37,7 +39,7 @@ app.use(middleware_post)
 
 app.post("/entry", ( req, res ) => {
     res.writeHead( 200, { 'Content-Type': 'application/json'})
-    res.end( req.json )
+    res.end( constructLeaderboard() )
 })
 
 app.get("/load", ( req, res ) => {
@@ -65,6 +67,36 @@ const constructLeaderboard = function () {
           "</td></tr>"
   }
   return lb
+}
+
+// Determine "completion grade" based on score
+const gradeScore = function( score ) {
+  switch(true){
+    case(score == 1000000):
+      return "MASTER"
+    case(score >= 990000):
+      return "SSS+"
+    case(score >= 980000):
+      return "SSS"
+    case(score >= 970000):
+      return "SS+"
+    case(score >= 950000):
+      return "SS"
+    case(score >= 930000):
+      return "S+"
+    case(score >= 900000):
+      return "S"
+    case(score >= 850000):
+      return "AAA"
+    case(score >= 800000):
+      return "AA"
+    case(score >= 700000):
+      return "A"
+    case(score > 0):
+      return "B"
+    case(score == 0):
+      return "D"
+  }
 }
 
 app.listen( process.env.PORT || 3000 )
