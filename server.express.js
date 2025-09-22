@@ -53,7 +53,7 @@ const constructLeaderboard = function () {
   // Table header line
   lb = "<tr id=lbhead><th>Rank</th><th>Player</th><th>Score</th><th>Grade</th><th>Combo</th><th>Complete</th></tr>"
   // Convert each entry into HTML table text
-  for(let i = 0; i < appdata.length; i++){
+  for(let i = 0; i < leaderboard.length; i++){
     e = entries[i]
     lb += "<tr><td>" +
           (i+1) + "</td><td>" +
