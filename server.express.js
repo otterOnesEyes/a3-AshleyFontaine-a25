@@ -59,7 +59,7 @@ const middleware_post = (req, res, next) => {
                 // Search for an existing entry
                 let foundEntry = false
                 for(let i = 0 ; i < leaderboard.length; i++){
-                    if(leaderboard[i].player == json.player){
+                    if(leaderboard[i].username == json.player){
                         foundEntry = true
                         if(leaderboard[i].password == json.password){
                             // Remove entry if password is correct

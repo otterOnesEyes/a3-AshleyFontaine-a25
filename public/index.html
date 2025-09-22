@@ -28,7 +28,7 @@
           <h2>Create/Edit Entry</h2>
           <p>Input your username, score, combo, and accuracy.<br>
           Set a password to update or delete your entry later!</p>
-          <form>
+          <form id="entryForm">
             <label for="eusername">Username</label>
             <input type="text" id="eusername">
             <br>
@@ -42,10 +42,16 @@
             <input type="number" id="combo" value="0" min="0" max="1000">
             <br>
             <br>
-            <input type="number" id="marvelous" value="0" min="0" max="1000">
-            <input type="number" id="great" value="0" min="0" max="1000">
-            <input type="number" id="good" value="0" min="0" max="1000">
-            <input type="number" id="miss" value="0" min="0" max="1000">
+            <input type="radio" id="am" name="completion" value="AM">
+            <label for="AM">All Marvelous</label>
+            <input type="radio" id="fc" name="completion" value="FC">
+            <label for="FC">Full Combo</label>
+            <input type="radio" id="ml" name="completion" value="ML">
+            <label for="ML">Missless</label>
+            <input type="radio" id="cl" name="completion" value="CL">
+            <label for="CL">Clear</label>
+            <input type="radio" id="nc" name="completion" value="NC">
+            <label for="NC">Not Clear</label>
             <br><br>
             <button id="entrybutton">Submit</button>
           </form>

@@ -12,10 +12,12 @@ const submit = async function( event ) {
         pwdinput = document.querySelector( '#epassword' ),
         scoreinput = document.querySelector( '#score' ),
         comboinput = document.querySelector( '#combo' ),
+        completeinput = document.getElementById('#entryForm').elements["completion"],
         json = { username: uninput.value, 
                  password: pwdinput.value, 
                  score: scoreinput.value,
-                 combo: comboinput.value
+                 combo: comboinput.value,
+                 complete: completeinput.value
         },
         body = JSON.stringify( json )
 
