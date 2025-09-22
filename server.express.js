@@ -1,6 +1,12 @@
 const express = require( 'express' ),
       app = express()
-      leaderboard = []
+      leaderboard = [{"_id":{"$oid":"68d06534bce0726f32e02c5c"},
+                      "username":"Player1",
+                      "password":"123",
+                      "score":{"$numberLong":"1000000"},
+                      "grade":"SSS+",
+                      "combo":{"$numberLong":"1000"},
+                      "complete":"All Marvelous"}]
 
 app.use( express.static( 'public' ) )
 
@@ -22,9 +28,7 @@ const middleware_post = (req, res, next) => {
     })
 }
 
-app.use(middleware_post)
-
-app.post('/entry', ( req, res ) => {
+app.post('/entry', middleware_post(), ( req, res ) => {
     res.writeHead( 200, { 'Content-Type': 'application/json'})
     res.end( req.json )
 })
