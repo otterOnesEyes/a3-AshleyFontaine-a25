@@ -32,8 +32,9 @@ const middleware_post = async (req, res, next) => {
 
             next()
         })
+    } else {
+        next()
     }
-    next()
 }
 
 app.use(middleware_post)
