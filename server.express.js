@@ -24,7 +24,7 @@ const middleware_post = (req, res, next) => {
             const json = JSON.parse( dataString )
             json.grade = gradeScore(json.score)
 
-            leaderboard.push(json)
+            addToLeaderboard(json)
 
             console.log(json)
             // ideally want to put this into the mongo
@@ -97,6 +97,10 @@ const gradeScore = function( score ) {
     case(score == 0):
       return "D"
   }
+}
+
+async function addToLeaderboard(json){
+    await leaderboard.push(json)
 }
 
 app.listen( process.env.PORT || 3000 )
