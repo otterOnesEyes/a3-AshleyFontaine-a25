@@ -3,9 +3,9 @@ const express = require( 'express' ),
       leaderboard = [{"_id":{"$oid":"68d06534bce0726f32e02c5c"},
                       "username":"Player1",
                       "password":"123",
-                      "score":{"$numberLong":"1000000"},
+                      "score":1000000,
                       "grade":"SSS+",
-                      "combo":{"$numberLong":"1000"},
+                      "combo":1000,
                       "complete":"All Marvelous"}]
 
 app.use( express.static( 'public' ) )
@@ -57,7 +57,7 @@ const constructLeaderboard = function () {
     e = leaderboard[i]
     lb += "<tr><td>" +
           (i+1) + "</td><td>" +
-          e.player + "</td><td>" +
+          e.username + "</td><td>" +
           e.score + "</td><td>" +
           e.grade + "</td><td>" +
           e.combo + "</td><td>" +
