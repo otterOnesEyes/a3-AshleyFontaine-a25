@@ -22,7 +22,7 @@ const middleware_post = (req, res, next) => {
 
         req.on( 'end', function() {
             const json = JSON.parse( dataString )
-            json.grade = gradeScore(jsObject.score)
+            json.grade = gradeScore(json.score)
 
             leaderboard.push(json)
 
