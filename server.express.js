@@ -10,7 +10,7 @@ const express = require( 'express' ),
 
 app.use( express.static( 'public' ) )
 
-const middleware_post = (req, res, next) => {
+const middleware_post = async (req, res, next) => {
     if(req.method === 'POST'){
         console.log("Post request received")
         let dataString = ''
@@ -19,7 +19,7 @@ const middleware_post = (req, res, next) => {
             dataString += data 
         })
 
-        req.on( 'end', async function() {
+        await req.on( 'end', async function() {
             const json = JSON.parse( dataString )
             json.grade = gradeScore(json.score)
 
