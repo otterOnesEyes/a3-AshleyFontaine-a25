@@ -43,8 +43,28 @@ app.post("/entry", ( req, res ) => {
 app.get("/load", ( req, res ) => {
     console.log("load request happening")
     res.writeHead( 200, { 'Content-Type': 'application/json'})
-    res.end( JSON.stringify(leaderboard) )
+    res.end( constructLeaderboard() )
     console.log("should have sent load")
 })
+
+const constructLeaderboard = function () {
+  leaderboard.sort((a, b) => b.score - a.score)
+
+  // Table header line
+  lb = "<tr id=lbhead><th>Rank</th><th>Player</th><th>Score</th><th>Grade</th><th>Combo</th><th>Complete</th></tr>"
+  // Convert each entry into HTML table text
+  for(let i = 0; i < appdata.length; i++){
+    e = entries[i]
+    lb += "<tr><td>" +
+          (i+1) + "</td><td>" +
+          e.player + "</td><td>" +
+          e.score + "</td><td>" +
+          e.grade + "</td><td>" +
+          e.combo + "</td><td>" +
+          e.complete +
+          "</td></tr>"
+  }
+  return lb
+}
 
 app.listen( process.env.PORT || 3000 )
