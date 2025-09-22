@@ -60,11 +60,16 @@ const remove = async function( event ) {
 const loadTable = async function( event ) {
   event.preventDefault()
 
+  console.log("Going to send a load!")
   const response = await fetch ( "/load", {
     method:"GET"
   })
 
+  console.log("Load sent!")
+
   const text = await response.text()
+
+  console.log("Recieved response")
 
   document.querySelector("#leaderboard").innerHTML = text
 }

@@ -34,12 +34,12 @@ const middleware_post = (req, res, next) => {
 
 app.use(middleware_post)
 
-app.post('/entry', ( req, res ) => {
+app.post("/entry", ( req, res ) => {
     res.writeHead( 200, { 'Content-Type': 'application/json'})
     res.end( req.json )
 })
 
-app.post('/load', ( req, res ) => {
+app.post("/load", ( req, res ) => {
     console.log("load request happening")
     res.writeHead( 200, { 'Content-Type': 'application/json'})
     res.end( JSON.stringify(leaderboard) )
