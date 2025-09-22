@@ -28,7 +28,7 @@ const middleware_post = (req, res, next) => {
     })
 }
 
-app.post('/entry', middleware_post(), ( req, res ) => {
+app.post('/entry', middleware_post(req, res), ( req, res ) => {
     res.writeHead( 200, { 'Content-Type': 'application/json'})
     res.end( req.json )
 })

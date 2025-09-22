@@ -12,18 +12,10 @@ const submit = async function( event ) {
         pwdinput = document.querySelector( '#epassword' ),
         scoreinput = document.querySelector( '#score' ),
         comboinput = document.querySelector( '#combo' ),
-        mainput = document.querySelector( '#marvelous' ),
-        grinput = document.querySelector( '#great' ),
-        goinput = document.querySelector( '#good' ),
-        miinput = document.querySelector( '#miss' ),
         json = { player: uninput.value, 
                  password: pwdinput.value, 
                  score: scoreinput.value,
-                 combo: comboinput.value,
-                 marvelous: mainput.value,
-                 great: grinput.value,
-                 good: goinput.value,
-                 miss: miinput.value
+                 combo: comboinput.value
         },
         body = JSON.stringify( json )
 
