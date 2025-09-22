@@ -11,31 +11,35 @@ const express = require( 'express' ),
 app.use( express.static( 'public' ) )
 
 const middleware_post = (req, res, next) => {
-    let dataString = ''
+    if(req.method === 'POST'){
+        let dataString = ''
 
-    req.on( 'data', function( data ) {
-        dataString += data 
-    })
+        req.on( 'data', function( data ) {
+            dataString += data 
+        })
 
-    req.on( 'end', function() {
-        const json = JSON.parse( dataString )
-        leaderboard.push(json)
+        req.on( 'end', function() {
+            const json = JSON.parse( dataString )
+            leaderboard.push(json)
 
-        console.log(json)
-        // ideally want to put this into the mongo
+            console.log(json)
+            // ideally want to put this into the mongo
 
-        next()
-    })
+            next()
+        })
+    }
 }
 
-app.post('/entry', middleware_post(req, res), ( req, res ) => {
+app.use(middleware_post)
+
+app.post('/entry', ( req, res ) => {
     res.writeHead( 200, { 'Content-Type': 'application/json'})
     res.end( req.json )
 })
 
 app.post('/load', ( req, res ) => {
     res.writeHead( 200, { 'Content-Type': 'application/json'})
-    res.end( leaderboard )
+    res.end( JSON.stringify(leaderboard) )
 })
 
 app.listen( process.env.PORT || 3000 )
