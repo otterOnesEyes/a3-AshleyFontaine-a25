@@ -11,7 +11,9 @@ const express = require( 'express' ),
 app.use( express.static( 'public' ) )
 
 const middleware_post = (req, res, next) => {
+    console.log("Middleware activated")
     if(req.method === 'POST'){
+        console.log("Post request received")
         let dataString = ''
 
         req.on( 'data', function( data ) {
@@ -38,8 +40,10 @@ app.post('/entry', ( req, res ) => {
 })
 
 app.post('/load', ( req, res ) => {
+    console.log("load request happening")
     res.writeHead( 200, { 'Content-Type': 'application/json'})
     res.end( JSON.stringify(leaderboard) )
+    console.log("should have sent load")
 })
 
 app.listen( process.env.PORT || 3000 )
