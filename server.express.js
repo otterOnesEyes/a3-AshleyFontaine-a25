@@ -11,7 +11,6 @@ const express = require( 'express' ),
 app.use( express.static( 'public' ) )
 
 const middleware_post = (req, res, next) => {
-    console.log("Middleware activated")
     if(req.method === 'POST'){
         console.log("Post request received")
         let dataString = ''
@@ -20,11 +19,11 @@ const middleware_post = (req, res, next) => {
             dataString += data 
         })
 
-        req.on( 'end', function() {
+        req.on( 'end', async function() {
             const json = JSON.parse( dataString )
             json.grade = gradeScore(json.score)
 
-            addToLeaderboard(json)
+            await leaderboard.push(json)
 
             console.log(json)
             // ideally want to put this into the mongo
@@ -43,10 +42,8 @@ app.post("/entry", ( req, res ) => {
 })
 
 app.get("/load", ( req, res ) => {
-    console.log("load request happening")
     res.writeHead( 200, { 'Content-Type': 'application/json'})
     res.end( constructLeaderboard() )
-    console.log("should have sent load")
 })
 
 const constructLeaderboard = function () {
@@ -97,10 +94,6 @@ const gradeScore = function( score ) {
     case(score == 0):
       return "D"
   }
-}
-
-async function addToLeaderboard(json){
-    await leaderboard.push(json)
 }
 
 app.listen( process.env.PORT || 3000 )
