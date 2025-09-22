@@ -30,6 +30,7 @@ const middleware_post = (req, res, next) => {
             next()
         })
     }
+    next()
 }
 
 app.use(middleware_post)
