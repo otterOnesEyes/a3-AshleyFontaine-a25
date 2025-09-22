@@ -26,6 +26,8 @@ const middleware_post = (req, res, next) => {
             await leaderboard.push(json)
 
             console.log(json)
+            console.log("After addition")
+            console.log(leaderboard)
             // ideally want to put this into the mongo
 
             next()
@@ -38,6 +40,8 @@ app.use(middleware_post)
 
 app.post("/entry", ( req, res ) => {
     res.writeHead( 200, { 'Content-Type': 'application/json'})
+    console.log("before final")
+    console.log(leaderboard)
     res.end( constructLeaderboard() )
 })
 
