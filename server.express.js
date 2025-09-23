@@ -10,6 +10,7 @@ const express = require( 'express' ),
 
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const uri = `mongodb+srv://${process.env.USERNM}:${process.env.PASS}@${process.env.HOST}/?retryWrites=true&w=majority&appName=leaderboard`;
+console.log(uri)
 
 const client = new MongoClient(uri, {
   serverApi: {
