@@ -99,7 +99,7 @@ const updateLeaderboard = async (req, leaderboard, collection) => {
             } else {
               // If password doesn't match, cancel the whole operation
               console.log("Incorrect Password!")
-              return
+              return false
             }
           }
         }
@@ -108,6 +108,7 @@ const updateLeaderboard = async (req, leaderboard, collection) => {
           // Create and add new entry
           await collection.insertOne(json)
           console.log("Uploaded to DB!")
+          return true
         }
       } else if (req.url === "/delete"){
         // Search for an existing entry
@@ -120,14 +121,16 @@ const updateLeaderboard = async (req, leaderboard, collection) => {
               await collection.deleteOne({
                 username:json.username
               })
-              leaderboard.splice(i, 1)
+              return true
             } else {
               console.log("Incorrect Password!")
+              return false
             }
           }
         }
         if(!foundEntry){
           console.log("User not found")
+          return false
         }
       }
     })
