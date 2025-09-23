@@ -24,14 +24,15 @@ let collection = null
 async function run() {
   try {
     await client.connect(
-	err => {
-		console.log("err :", err);
-		client.close();
-	}
-
+      err => {
+        console.log("err :", err);
+         client.close();
+      }
     );  
+
     collection = await client.db("lb").collection("entries");
-    console.log(collection.find({}).toArray())
+    entries = await collection.find({}).toArray()
+    console.log(entries)
     // Send a ping to confirm a successful connection
     await client.db("lb").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
