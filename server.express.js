@@ -54,7 +54,7 @@ const middleware_post = async (req, res, next) => {
 
  } finally {
     // Ensures that the client will close when you finish/error
-    print("closing connection now!")
+    console.log("closing connection now!")
     await client.close();
     next()
   }
