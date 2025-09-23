@@ -127,19 +127,19 @@ const updateLeaderboard = async (req, leaderboard, client) => {
 
 app.use(middleware_post)
 
-app.post("/entry", ( req, res ) => {
+app.post("/entry", async ( req, res ) => {
     res.writeHead( 200, { 'Content-Type': 'application/json'})
-    res.end( constructLeaderboard() )
+    res.end( await constructLeaderboard() )
 })
 
-app.post("/delete", (req, res) => {
+app.post("/delete", async (req, res) => {
     res.writeHead( 200, { 'Content-Type': 'application/json'})
-    res.end( constructLeaderboard() )
+    res.end( await constructLeaderboard() )
 })
 
-app.get("/load", ( req, res ) => {
+app.get("/load", async ( req, res ) => {
     res.writeHead( 200, { 'Content-Type': 'application/json'})
-    res.end( constructLeaderboard() )
+    res.end( await constructLeaderboard() )
 })
 
 const constructLeaderboard = async function () {
