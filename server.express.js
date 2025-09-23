@@ -39,9 +39,6 @@ run().catch(console.dir);
 app.use( express.static( 'public' ) )
 
 const middleware_post = async (req, res, next) => {
-    
-  collection = await client.db("lb").collection("entries");
-  leaderboard = await collection.find({}).toArray()
 
   if(req.method === 'POST'){
     await updateLeaderboard(req, leaderboard, collection)
@@ -65,6 +62,10 @@ const updateLeaderboard = async (req, leaderboard, collection) => {
           client.close();
         }
       );  
+      
+      collection = await client.db("lb").collection("entries");
+      leaderboard = await collection.find({}).toArray()
+
       console.log("All data loaded")
       const json = await JSON.parse( dataString )
       json.grade = await gradeScore(json.score)
