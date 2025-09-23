@@ -39,24 +39,15 @@ run().catch(console.dir);
 app.use( express.static( 'public' ) )
 
 const middleware_post = async (req, res, next) => {
-  try {
     
-    
-    collection = await client.db("lb").collection("entries");
-    leaderboard = await collection.find({}).toArray()
+  collection = await client.db("lb").collection("entries");
+  leaderboard = await collection.find({}).toArray()
 
-    if(req.method === 'POST'){
-      await updateLeaderboard(req, leaderboard, collection)
-    }
-
-    next()
-
-  } catch (e) {
-    // Ensures that the client will close when you finish/error
-    console.log("closing connection now!")
-    await client.close();
-    next()
+  if(req.method === 'POST'){
+    await updateLeaderboard(req, leaderboard, collection)
   }
+
+  next()
 }
 
 const updateLeaderboard = async (req, leaderboard, collection) => {
