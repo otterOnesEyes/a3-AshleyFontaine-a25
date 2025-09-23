@@ -50,7 +50,7 @@ const middleware_post = async (req, res, next) => {
     collection = await client.db("lb").collection("entries");
     leaderboard = await collection.find({}).toArray()
 
-    await updateLeaderboard(req, leaderboard, collection)
+    await new Promise(updateLeaderboard(req, leaderboard, collection))
     
     console.log("leaderboard should be update! closing client...")
     await client.close()
