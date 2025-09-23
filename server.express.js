@@ -50,13 +50,15 @@ const middleware_post = async (req, res, next) => {
     collection = await client.db("lb").collection("entries");
     leaderboard = await collection.find({}).toArray()
 
-    await updateLeaderboard(req, leaderboard, collection).finally(client.close())
+    await updateLeaderboard(req, leaderboard, collection)
+    
+    await client.close()
 
     next()
 
   } catch (e) {
     // Ensures that the client will close when you finish/error
-    console.log("error caught: " + e)
+    console.log("closing connection now!")
     await client.close();
     next()
   }
