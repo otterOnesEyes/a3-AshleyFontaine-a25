@@ -68,7 +68,7 @@ const updateLeaderboard = async (req, leaderboard, collection) => {
     })
 
     req.on( 'end', async function() {
-      client.connect(
+      await client.connect(
         err => {
           console.log("err :", err);
           client.close();
@@ -149,7 +149,7 @@ app.get("/load", async ( req, res ) => {
 
 const constructLeaderboard = async function () {
   try {
-    client.connect(
+    await client.connect(
       err => {
         console.log("err :", err);
         client.close();
