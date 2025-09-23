@@ -12,7 +12,6 @@ const client = new MongoClient(uri, {
   }
 });
 
-
 let collection = null
 
 async function run() {
@@ -42,6 +41,7 @@ app.use( express.static( 'public' ) )
 const middleware_post = async (req, res, next) => {
   try {
     
+    
     collection = await client.db("lb").collection("entries");
     leaderboard = await collection.find({}).toArray()
 
@@ -68,6 +68,12 @@ const updateLeaderboard = async (req, leaderboard, collection) => {
     })
 
     req.on( 'end', async function() {
+      client.connect(
+        err => {
+          console.log("err :", err);
+          client.close();
+        }
+      );  
       console.log("All data loaded")
       const json = await JSON.parse( dataString )
       json.grade = await gradeScore(json.score)
@@ -91,7 +97,6 @@ const updateLeaderboard = async (req, leaderboard, collection) => {
             } else {
               // If password doesn't match, cancel the whole operation
               console.log("Incorrect Password!")
-              return false
             }
           }
         }
@@ -100,7 +105,6 @@ const updateLeaderboard = async (req, leaderboard, collection) => {
           // Create and add new entry
           await collection.insertOne(json)
           console.log("Uploaded to DB!")
-          return true
         }
       } else if (req.url === "/delete"){
       // Search for an existing entry
@@ -113,18 +117,16 @@ const updateLeaderboard = async (req, leaderboard, collection) => {
             await collection.deleteOne({
               username:json.username
             })
-            return true
           } else {
             console.log("Incorrect Password!")
-            return false
           }
         }
       }
       if(!foundEntry){
         console.log("User not found")
-        return false
       }
     }
+    client.close();
   })
 }
 
@@ -147,7 +149,12 @@ app.get("/load", async ( req, res ) => {
 
 const constructLeaderboard = async function () {
   try {
-
+    client.connect(
+      err => {
+        console.log("err :", err);
+        client.close();
+      }
+    );  
     collection = await client.db("lb").collection("entries");
     leaderboard = await collection.find({}).toArray()
     leaderboard.sort((a, b) => b.score - a.score)
@@ -167,6 +174,7 @@ const constructLeaderboard = async function () {
             "</td></tr>"
     }
   } finally {
+    client.close()
   }
   return lb
 }
