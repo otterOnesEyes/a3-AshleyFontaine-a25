@@ -12,12 +12,6 @@ const client = new MongoClient(uri, {
   }
 });
 
-client.connect(
-  err => {
-    console.log("err :", err);
-    client.close();
-  }
-);  
 
 let collection = null
 
