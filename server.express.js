@@ -50,7 +50,7 @@ const middleware_post = async (req, res, next) => {
     collection = await client.db("lb").collection("entries");
     leaderboard = await collection.find({}).toArray()
 
-    await updateLeaderboard(req, leaderboard, client)
+    await updateLeaderboard(req, leaderboard, collection)
 
  } finally {
     // Ensures that the client will close when you finish/error
@@ -59,7 +59,7 @@ const middleware_post = async (req, res, next) => {
   }
 }
 
-const updateLeaderboard = async (req, leaderboard, client) => {
+const updateLeaderboard = async (req, leaderboard, collection) => {
   if(req.method === 'POST'){
     console.log("Post request received")
     let dataString = ''
@@ -69,18 +69,20 @@ const updateLeaderboard = async (req, leaderboard, client) => {
     })
 
     req.on( 'end', async function() {
-      const json = JSON.parse( dataString )
-      json.grade = gradeScore(json.score)
+      console.log("All data loaded")
+      const json = await JSON.parse( dataString )
+      json.grade = await gradeScore(json.score)
 
       if(req.url === "/entry"){
         // Search for the existing entry.
+        console.log("Going to make an entry!")
         let foundEntry = false
         for(let i = 0 ; i < leaderboard.length; i++){
           if(leaderboard[i].username == json.username){
             if(leaderboard[i].password == json.password){
               // If player name and password match, update with new data.
               foundEntry = true
-              await client.db("lb").collection("entries").updateOne(
+              await collection.updateOne(
                 {username: json.username},
                 { $set:{score:json.score}},
                 { $set:{grade:json.grade}},
@@ -96,8 +98,10 @@ const updateLeaderboard = async (req, leaderboard, client) => {
           }
         }
         if(!foundEntry){
+          console.log("Going to input entry!")
           // Create and add new entry
-          await client.db("lb").collection("entries").insertOne(json)
+          await collection.insertOne(json)
+          console.log("Uploaded to DB!")
         }
       } else if (req.url === "/delete"){
         // Search for an existing entry
@@ -107,7 +111,7 @@ const updateLeaderboard = async (req, leaderboard, client) => {
             foundEntry = true
             if(leaderboard[i].password == json.password){
               // Remove entry if password is correct
-              await client.db("lb").collection("entries").deleteOne({
+              await collection.deleteOne({
                 username:json.username
               })
               leaderboard.splice(i, 1)
