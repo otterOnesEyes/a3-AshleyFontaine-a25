@@ -1,12 +1,5 @@
 const express = require( 'express' ),
       app = express()
-      leaderboard = [{"_id":{"$oid":"68d06534bce0726f32e02c5c"},
-                      "username":"Player1",
-                      "password":"123",
-                      "score":1000000,
-                      "grade":"SSS+",
-                      "combo":1000,
-                      "complete":"All Marvelous"}]
 
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const uri = `mongodb+srv://${process.env.USERNM}:${process.env.PASS}@${process.env.HOST}/?retryWrites=true&w=majority&appName=leaderboard`;
@@ -31,8 +24,6 @@ async function run() {
     );  
 
     collection = await client.db("lb").collection("entries");
-    entries = await collection.find({}).toArray()
-    console.log(entries)
     // Send a ping to confirm a successful connection
     await client.db("lb").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
@@ -134,7 +125,8 @@ app.get("/load", ( req, res ) => {
     res.end( constructLeaderboard() )
 })
 
-const constructLeaderboard = function () {
+const constructLeaderboard = async function () {
+  leaderboard = await collection.find({}).toArray()
   leaderboard.sort((a, b) => b.score - a.score)
 
   // Table header line
