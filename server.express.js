@@ -68,7 +68,7 @@ const updateLeaderboard = async (req, leaderboard, client) => {
       dataString += data 
     })
 
-    req.on( 'end', function() {
+    req.on( 'end', async function() {
       const json = JSON.parse( dataString )
       json.grade = gradeScore(json.score)
 
@@ -79,16 +79,14 @@ const updateLeaderboard = async (req, leaderboard, client) => {
           if(leaderboard[i].username == json.username){
             if(leaderboard[i].password == json.password){
               // If player name and password match, update with new data.
-                            
               foundEntry = true
-              const entry = leaderboard[i]
-
-              entry.score = json.score
-              entry.grade = json.grade
-              entry.combo = json.combo
-              entry.completion = json.completion
-
-              // ideally want to put this into the mongo
+              await client.db("lb").collection("entries").updateOne(
+                {username: json.username},
+                { $set:{score:json.score}},
+                { $set:{grade:json.grade}},
+                { $set:{combo:json.combo}},
+                { $set:{completion:json.completion}}
+              )
 
             } else {
               // If password doesn't match, cancel the whole operation
@@ -99,18 +97,19 @@ const updateLeaderboard = async (req, leaderboard, client) => {
         }
         if(!foundEntry){
           // Create and add new entry
-          leaderboard.push(json)
-                    
-            // ideally want to put this into the mongo
+          await client.db("lb").collection("entries").insertOne(json)
         }
       } else if (req.url === "/delete"){
         // Search for an existing entry
         let foundEntry = false
         for(let i = 0 ; i < leaderboard.length; i++){
-          if(leaderboard[i].username == json.player){
+          if(leaderboard[i].username == json.username){
             foundEntry = true
             if(leaderboard[i].password == json.password){
               // Remove entry if password is correct
+              await client.db("lb").collection("entries").deleteOne({
+                username:json.username
+              })
               leaderboard.splice(i, 1)
             } else {
               console.log("Incorrect Password!")
