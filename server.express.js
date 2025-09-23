@@ -28,7 +28,7 @@ async function run() {
     await client.db("lb").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
 
- } finally {
+  } finally {
     // Ensures that the client will close when you finish/error
     await client.close();
   }
@@ -38,74 +38,91 @@ run().catch(console.dir);
 
 app.use( express.static( 'public' ) )
 
-const middleware_post = (req, res, next) => {
-    if(req.method === 'POST'){
-        console.log("Post request received")
-        let dataString = ''
+const middleware_post = async (req, res, next) => {
+  try {
+    await client.connect(
+      err => {
+        console.log("err :", err);
+        client.close();
+      }
+    );  
 
-        req.on( 'data', function( data ) {
-            dataString += data 
-        })
+    collection = await client.db("lb").collection("entries");
+    leaderboard = await collection.find({}).toArray()
 
-        req.on( 'end', function() {
-            const json = JSON.parse( dataString )
-            json.grade = gradeScore(json.score)
+    await updateLeaderboard(req, leaderboard, client)
 
-            if(req.url === "/entry"){
-                // Search for the existing entry.
-                let foundEntry = false
-                for(let i = 0 ; i < leaderboard.length; i++){
-                    if(leaderboard[i].username == json.username){
-                        if(leaderboard[i].password == json.password){
-                            // If player name and password match, update with new data.
+ } finally {
+    // Ensures that the client will close when you finish/error
+    await client.close();
+    next()
+  }
+}
+
+const updateLeaderboard = async (req, leaderboard, client) => {
+  if(req.method === 'POST'){
+    console.log("Post request received")
+    let dataString = ''
+
+    req.on( 'data', function( data ) {
+      dataString += data 
+    })
+
+    req.on( 'end', function() {
+      const json = JSON.parse( dataString )
+      json.grade = gradeScore(json.score)
+
+      if(req.url === "/entry"){
+        // Search for the existing entry.
+        let foundEntry = false
+        for(let i = 0 ; i < leaderboard.length; i++){
+          if(leaderboard[i].username == json.username){
+            if(leaderboard[i].password == json.password){
+              // If player name and password match, update with new data.
                             
-                            foundEntry = true
-                            const entry = leaderboard[i]
+              foundEntry = true
+              const entry = leaderboard[i]
 
-                            entry.score = json.score
-                            entry.grade = json.grade
-                            entry.combo = json.combo
-                            entry.completion = json.completion
+              entry.score = json.score
+              entry.grade = json.grade
+              entry.combo = json.combo
+              entry.completion = json.completion
 
-                            // ideally want to put this into the mongo
+              // ideally want to put this into the mongo
 
-
-                        } else {
-                            // If password doesn't match, cancel the whole operation
-                            console.log("Incorrect Password!")
-                            return
-                        }
-                    }
-                }
-                if(!foundEntry){
-                    // Create and add new entry
-                    leaderboard.push(json)
-                    
-                    // ideally want to put this into the mongo
-                }
-            } else if (req.url === "/delete"){
-                // Search for an existing entry
-                let foundEntry = false
-                for(let i = 0 ; i < leaderboard.length; i++){
-                    if(leaderboard[i].username == json.player){
-                        foundEntry = true
-                        if(leaderboard[i].password == json.password){
-                            // Remove entry if password is correct
-                            leaderboard.splice(i, 1)
-                        } else {
-                            console.log("Incorrect Password!")
-                        }
-                    }
-                }
-                if(!foundEntry){
-                    console.log("User not found")
-                }
+            } else {
+              // If password doesn't match, cancel the whole operation
+              console.log("Incorrect Password!")
+              return
             }
-            next()
-        })
-    } else {
-        next()
-    }
+          }
+        }
+        if(!foundEntry){
+          // Create and add new entry
+          leaderboard.push(json)
+                    
+            // ideally want to put this into the mongo
+        }
+      } else if (req.url === "/delete"){
+        // Search for an existing entry
+        let foundEntry = false
+        for(let i = 0 ; i < leaderboard.length; i++){
+          if(leaderboard[i].username == json.player){
+            foundEntry = true
+            if(leaderboard[i].password == json.password){
+              // Remove entry if password is correct
+              leaderboard.splice(i, 1)
+            } else {
+              console.log("Incorrect Password!")
+            }
+          }
+        }
+        if(!foundEntry){
+          console.log("User not found")
+        }
+      }
+    })
+  }
 }
 
 app.use(middleware_post)
@@ -126,22 +143,35 @@ app.get("/load", ( req, res ) => {
 })
 
 const constructLeaderboard = async function () {
-  leaderboard = await collection.find({}).toArray()
-  leaderboard.sort((a, b) => b.score - a.score)
+  try {
+    await client.connect(
+      err => {
+        console.log("err :", err);
+         client.close();
+      }
+    );  
 
-  // Table header line
-  lb = "<tr id=lbhead><th>Rank</th><th>Player</th><th>Score</th><th>Grade</th><th>Combo</th><th>Complete</th></tr>"
-  // Convert each entry into HTML table text
-  for(let i = 0; i < leaderboard.length; i++){
-    e = leaderboard[i]
-    lb += "<tr><td>" +
-          (i+1) + "</td><td>" +
-          e.username + "</td><td>" +
-          e.score + "</td><td>" +
-          e.grade + "</td><td>" +
-          e.combo + "</td><td>" +
-          e.complete +
-          "</td></tr>"
+    collection = await client.db("lb").collection("entries");
+    leaderboard = await collection.find({}).toArray()
+    leaderboard.sort((a, b) => b.score - a.score)
+
+    // Table header line
+    lb = "<tr id=lbhead><th>Rank</th><th>Player</th><th>Score</th><th>Grade</th><th>Combo</th><th>Complete</th></tr>"
+    // Convert each entry into HTML table text
+    for(let i = 0; i < leaderboard.length; i++){
+      e = leaderboard[i]
+      lb += "<tr><td>" +
+            (i+1) + "</td><td>" +
+            e.username + "</td><td>" +
+            e.score + "</td><td>" +
+            e.grade + "</td><td>" +
+            e.combo + "</td><td>" +
+            e.complete +
+            "</td></tr>"
+    }
+  } finally {
+    // Ensures that the client will close when you finish/error
+    await client.close();
   }
   return lb
 }
