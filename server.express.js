@@ -12,6 +12,13 @@ const client = new MongoClient(uri, {
   }
 });
 
+await client.connect(
+  err => {
+    console.log("err :", err);
+    client.close();
+  }
+);  
+
 let collection = null
 
 async function run() {
@@ -40,26 +47,13 @@ app.use( express.static( 'public' ) )
 
 const middleware_post = async (req, res, next) => {
   try {
-    await client.connect(
-      err => {
-        console.log("err :", err);
-        client.close();
-      }
-    );  
-
+    
     collection = await client.db("lb").collection("entries");
     leaderboard = await collection.find({}).toArray()
 
-    await new Promise((resolve, reject) => {
-      if(updateLeaderboard(req, leaderboard, collection)){
-        resolve()
-      } else {
-        reject()
-      }
-    })
-    
-    console.log("leaderboard should be update! closing client...")
-    await client.close()
+    if(req.method === 'POST'){
+      await updateLeaderboard(req, leaderboard, collection)
+    }
 
     next()
 
@@ -72,7 +66,6 @@ const middleware_post = async (req, res, next) => {
 }
 
 const updateLeaderboard = async (req, leaderboard, collection) => {
-  if(req.method === 'POST'){
     console.log("Post request received")
     let dataString = ''
 
@@ -101,7 +94,6 @@ const updateLeaderboard = async (req, leaderboard, collection) => {
                 { $set:{combo:json.combo}},
                 { $set:{completion:json.completion}}
               )
-
             } else {
               // If password doesn't match, cancel the whole operation
               console.log("Incorrect Password!")
@@ -117,30 +109,29 @@ const updateLeaderboard = async (req, leaderboard, collection) => {
           return true
         }
       } else if (req.url === "/delete"){
-        // Search for an existing entry
-        let foundEntry = false
-        for(let i = 0 ; i < leaderboard.length; i++){
-          if(leaderboard[i].username == json.username){
-            foundEntry = true
-            if(leaderboard[i].password == json.password){
-              // Remove entry if password is correct
-              await collection.deleteOne({
-                username:json.username
-              })
-              return true
-            } else {
-              console.log("Incorrect Password!")
-              return false
-            }
+      // Search for an existing entry
+      let foundEntry = false
+      for(let i = 0 ; i < leaderboard.length; i++){
+        if(leaderboard[i].username == json.username){
+          foundEntry = true
+          if(leaderboard[i].password == json.password){
+            // Remove entry if password is correct
+            await collection.deleteOne({
+              username:json.username
+            })
+            return true
+          } else {
+            console.log("Incorrect Password!")
+            return false
           }
         }
-        if(!foundEntry){
-          console.log("User not found")
-          return false
-        }
       }
-    })
-  }
+      if(!foundEntry){
+        console.log("User not found")
+        return false
+      }
+    }
+  })
 }
 
 app.use(middleware_post)
@@ -162,12 +153,6 @@ app.get("/load", async ( req, res ) => {
 
 const constructLeaderboard = async function () {
   try {
-    await client.connect(
-      err => {
-        console.log("err :", err);
-         client.close();
-      }
-    );  
 
     collection = await client.db("lb").collection("entries");
     leaderboard = await collection.find({}).toArray()
@@ -188,8 +173,6 @@ const constructLeaderboard = async function () {
             "</td></tr>"
     }
   } finally {
-    // Ensures that the client will close when you finish/error
-    await client.close();
   }
   return lb
 }
