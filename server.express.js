@@ -12,7 +12,7 @@ const client = new MongoClient(uri, {
   }
 });
 
-await client.connect(
+client.connect(
   err => {
     console.log("err :", err);
     client.close();
