@@ -52,6 +52,7 @@ const middleware_post = async (req, res, next) => {
 
     await updateLeaderboard(req, leaderboard, collection)
     
+    console.log("leaderboard should be update! closing client...")
     await client.close()
 
     next()
