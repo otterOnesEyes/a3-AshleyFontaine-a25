@@ -69,7 +69,7 @@ const updateLeaderboard = (req) => {
       console.log("db found")
       collection = await db.collection("entries");
       console.log("collection found")
-      leaderboard = await collection.find({}).toArray()
+      leaderboard = await collection.find().toArray()
 
       console.log("All data loaded")
       const json = await JSON.parse( dataString )
