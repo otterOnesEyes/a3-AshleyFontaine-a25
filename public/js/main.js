@@ -41,7 +41,7 @@ const remove = async function( event ) {
   // collect data from relevant inputs
   const uninput = document.querySelector( '#dusername' ),
         pwdinput = document.querySelector( '#dpassword' ),
-        json = { player: uninput.value,
+        json = { username: uninput.value,
                  password: pwdinput.value
         },
         body = JSON.stringify( json )
