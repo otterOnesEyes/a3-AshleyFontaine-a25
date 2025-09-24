@@ -41,13 +41,13 @@ app.use( express.static( 'public' ) )
 const middleware_post = async (req, res, next) => {
 
   if(req.method === 'POST'){
-    await updateLeaderboard(req, leaderboard, collection)
+    await updateLeaderboard(req)
   }
 
   next()
 }
 
-const updateLeaderboard = (req, leaderboard, collection) => {
+const updateLeaderboard = (req) => {
     console.log("Post request received")
     let dataString = ''
 
