@@ -47,7 +47,7 @@ const middleware_post = async (req, res, next) => {
   next()
 }
 
-const updateLeaderboard = async (req, leaderboard, collection) => {
+const updateLeaderboard = (req, leaderboard, collection) => {
     console.log("Post request received")
     let dataString = ''
 
@@ -86,9 +86,11 @@ const updateLeaderboard = async (req, leaderboard, collection) => {
                 { $set:{combo:json.combo}},
                 { $set:{completion:json.completion}}
               )
+              await client.close();
             } else {
               // If password doesn't match, cancel the whole operation
               console.log("Incorrect Password!")
+              await client.close();
             }
           }
         }
@@ -97,6 +99,7 @@ const updateLeaderboard = async (req, leaderboard, collection) => {
           // Create and add new entry
           await collection.insertOne(json)
           console.log("Uploaded to DB!")
+          await client.close();
         }
       } else if (req.url === "/delete"){
       // Search for an existing entry
@@ -109,16 +112,18 @@ const updateLeaderboard = async (req, leaderboard, collection) => {
             await collection.deleteOne({
               username:json.username
             })
+            await client.close();
           } else {
             console.log("Incorrect Password!")
+            await client.close();
           }
         }
       }
       if(!foundEntry){
         console.log("User not found")
+        await client.close();
       }
     }
-    client.close();
   })
 }
 
