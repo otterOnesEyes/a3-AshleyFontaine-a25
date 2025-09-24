@@ -22,6 +22,7 @@ const submit = async function( event ) {
         },
         body = JSON.stringify( json )
 
+  console.log(json.complete)
   const response = await fetch( "/entry", {
     method:"POST",
     body 

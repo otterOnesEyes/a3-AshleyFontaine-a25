@@ -70,6 +70,7 @@ const updateLeaderboard = async (req, res, next) => {
         if(req.lb[i].password == req.json.password){
           // If player name and password match, update with new data.
           foundEntry = true
+          console.log(req.json.completion)
           await collection.updateOne(
             {username: req.json.username},
             { $set:{score:req.json.score}},
@@ -167,12 +168,13 @@ const loginUser = async (req, res, next) => {
           userScore = req.lb[i].score
           userCombo = req.lb[i].combo
           userComplete = req.lb[i].complete
-          json.newForms = `<form id="entryForm">
+          json.newForms = `<div class="form">
+          <form id="entryForm">
             <label for="score">Score</label>
-            <input type="number" id="score" value="0" min="0" max="1000000">
+            <input type="number" id="score" value="` + userScore + `" min="0" max="1000000">
             <br>
             <label for="combo">Max Combo</label>
-            <input type="number" id="combo" value="0" min="0" max="1000">
+            <input type="number" id="combo" value="` + userCombo + `" min="0" max="1000">
             <br>
             <br></br>
             <input type="radio" id="am" name="completion" value="All Marvelous" `
@@ -212,7 +214,8 @@ const loginUser = async (req, res, next) => {
             <br><br>
             <button id="entrybutton">Submit</button>
             <button id="deletebutton">Delete</button>
-          </form>`
+          </form>
+          </div>`
           res.write(JSON.stringify(json))
           next()
         } else {
