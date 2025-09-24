@@ -84,7 +84,7 @@ const login = async function ( event ) {
         body = JSON.stringify( json )
   
   console.log("Going to log in!")
-  const respose = await fetch ( "/login", {
+  const response = await fetch ( "/login", {
     method:"POST",
     body
   })
