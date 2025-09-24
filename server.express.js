@@ -63,7 +63,7 @@ const updateLeaderboard = async (req, res, next) => {
   if(req.url === "/entry"){
     // Search for the existing entry.
     console.log("Going to make an entry!")
-    console.log("After next: " + req.json.username)
+    console.log("After next: " + req.json)
     for(let i = 0 ; i < req.lb.length; i++){
       if(req.lb[i].username == req.json.username){
         if(req.lb[i].password == req.json.password){
