@@ -64,6 +64,8 @@ const updateLeaderboard = (req, leaderboard, collection) => {
         }
       );  
       
+      console.log("client connected")
+
       collection = await client.db("lb").collection("entries");
       leaderboard = await collection.find({}).toArray()
 
