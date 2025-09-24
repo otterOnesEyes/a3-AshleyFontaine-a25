@@ -48,7 +48,7 @@ const getDataString = async (req, res, next) => {
       req.json = await JSON.parse( dataString )
       req.json.grade = await gradeScore(req.json.score)
     })
-    
+
     next()
   } else {
     next()
@@ -62,16 +62,16 @@ const updateLeaderboard = async (req, res, next) => {
     // Search for the existing entry.
     console.log("Going to make an entry!")
     for(let i = 0 ; i < req.lb.length; i++){
-      if(req.lb[i].username == json.username){
-        if(req.lb[i].password == json.password){
+      if(req.lb[i].username == req.json.username){
+        if(req.lb[i].password == req.json.password){
           // If player name and password match, update with new data.
           foundEntry = true
           await collection.updateOne(
-            {username: json.username},
-            { $set:{score:json.score}},
-            { $set:{grade:json.grade}},
-            { $set:{combo:json.combo}},
-            { $set:{completion:json.completion}}
+            {username: req.json.username},
+            { $set:{score:req.json.score}},
+            { $set:{grade:req.json.grade}},
+            { $set:{combo:req.json.combo}},
+            { $set:{completion:req.json.completion}}
           )
           req.lb[i].score = await req.json.score
           req.lb[i].grade = await req.json.grade
@@ -88,8 +88,8 @@ const updateLeaderboard = async (req, res, next) => {
     if(!foundEntry){
       console.log("Going to input entry!")
       // Create and add new entry
-      await collection.insertOne(json)
-      await req.lb.push(json)
+      await collection.insertOne(req.json)
+      await req.lb.push(req.json)
       console.log("Uploaded to DB!")
       next()
     }
@@ -97,12 +97,12 @@ const updateLeaderboard = async (req, res, next) => {
     // Search for an existing entry
     let foundEntry = false
     for(let i = 0 ; i < req.lb.length; i++){
-      if(req.lb[i].username == json.username){
+      if(req.lb[i].username == req.json.username){
         foundEntry = true
-        if(req.lb[i].password == json.password){
+        if(req.lb[i].password == req.json.password){
           // Remove entry if password is correct
           await collection.deleteOne({
-            username:json.username
+            username:req.json.username
           })
           await req.lb.splice(i, 1)
           next()
