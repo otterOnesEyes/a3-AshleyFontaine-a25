@@ -46,7 +46,7 @@ const getDataString = async (req, res, next) => {
 
     req.on( 'end', async function() {
       req.json = await JSON.parse( dataString )
-      req.json.grade = await gradeScore(json.score)
+      req.json.grade = await gradeScore(req.json.score)
     })
   } else {
     next()
