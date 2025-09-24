@@ -12,12 +12,7 @@ const client = new MongoClient(uri, {
   }
 });
 
-await client.connect(
-  err => {
-    console.log("err :", err);
-    client.close();
-  }
-);  
+
 
 app.use( express.static( 'public' ) )
 
