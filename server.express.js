@@ -56,6 +56,7 @@ const updateLeaderboard = (req, leaderboard, collection) => {
     })
 
     req.on( 'end', async function() {
+      console.log("end of data collection. going to connect")
       await client.connect(
         err => {
           console.log("err :", err);
@@ -125,6 +126,8 @@ const updateLeaderboard = (req, leaderboard, collection) => {
       }
     }
   })
+
+  console.log("Passed Reqs")
 }
 
 app.use(middleware_post)
