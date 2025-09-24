@@ -79,7 +79,7 @@ const updateLeaderboard = async (req, res, next) => {
           req.lb[i].score = await req.json.score
           req.lb[i].grade = await req.json.grade
           req.lb[i].combo = await req.json.combo
-          req.lb[i].completion = await req.json.complete
+          req.lb[i].complete = await req.json.complete
           next()
         } else {
           // If password doesn't match, cancel the whole operation
