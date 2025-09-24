@@ -47,6 +47,7 @@ const getDataString = async (req, res, next) => {
     req.on( 'end', async function() {
       req.json = await JSON.parse( dataString )
       console.log(req.json)
+      console.log("Before next(): " + req.json.username)
       req.json.grade = await gradeScore(req.json.score)
     })
 
@@ -62,6 +63,7 @@ const updateLeaderboard = async (req, res, next) => {
   if(req.url === "/entry"){
     // Search for the existing entry.
     console.log("Going to make an entry!")
+    console.log("After next: " + req.json.username)
     for(let i = 0 ; i < req.lb.length; i++){
       if(req.lb[i].username == req.json.username){
         if(req.lb[i].password == req.json.password){
