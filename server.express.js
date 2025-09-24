@@ -48,6 +48,8 @@ const getDataString = async (req, res, next) => {
       req.json = await JSON.parse( dataString )
       req.json.grade = await gradeScore(req.json.score)
     })
+    
+    next()
   } else {
     next()
   }
