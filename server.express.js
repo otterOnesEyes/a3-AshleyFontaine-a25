@@ -64,24 +64,22 @@ const updateLeaderboard = async (req, res, next) => {
   if(req.url === "/entry"){
     // Search for the existing entry.
     await console.log("Going to make an entry!")
-    await console.log("After next: " + req.json)
     for(let i = 0 ; i < req.lb.length; i++){
       if(req.lb[i].username == req.json.username){
         if(req.lb[i].password == req.json.password){
           // If player name and password match, update with new data.
           foundEntry = true
-          console.log(req.json.completion)
           await collection.updateOne(
             {username: req.json.username},
             { $set:{score:req.json.score}},
             { $set:{grade:req.json.grade}},
             { $set:{combo:req.json.combo}},
-            { $set:{completion:req.json.completion}}
+            { $set:{completion:req.json.complete}}
           )
           req.lb[i].score = await req.json.score
           req.lb[i].grade = await req.json.grade
           req.lb[i].combo = await req.json.combo
-          req.lb[i].completion = await req.json.completion
+          req.lb[i].completion = await req.json.complete
           next()
         } else {
           // If password doesn't match, cancel the whole operation
