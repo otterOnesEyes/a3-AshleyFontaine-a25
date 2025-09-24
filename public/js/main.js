@@ -90,10 +90,10 @@ const login = async function ( event ) {
   })
 
   const text = await response.text()
-  json = JSON.parse(text)
+  resJson = JSON.parse(text)
 
-  if(json.success) {
-    document.querySelector("#formBox").innerHTML = json.newForms
+  if(resJson.success) {
+    document.querySelector("#formBox").innerHTML = resJson.newForms
     await newListeners()
     servingUsername = json.username
     servingPassword = json.password
