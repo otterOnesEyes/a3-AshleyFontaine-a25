@@ -49,9 +49,10 @@ const getDataString = async (req, res, next) => {
       console.log(req.json)
       console.log("Before next(): " + req.json.username)
       req.json.grade = await gradeScore(req.json.score)
+      
+      next()
     })
 
-    next()
   } else {
     next()
   }
