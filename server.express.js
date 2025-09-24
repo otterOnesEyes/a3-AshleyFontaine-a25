@@ -22,8 +22,7 @@ async function run() {
          client.close();
       }
     );  
-
-    collection = await client.db("lb").collection("entries");
+    
     // Send a ping to confirm a successful connection
     await client.db("lb").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
@@ -66,7 +65,10 @@ const updateLeaderboard = (req) => {
       
       console.log("client connected")
 
-      collection = await client.db("lb").collection("entries");
+      db = await client.db("lb")
+      console.log("db found")
+      collection = await db.collection("entries");
+      console.log("collection found")
       leaderboard = await collection.find({}).toArray()
 
       console.log("All data loaded")
