@@ -47,9 +47,9 @@ const getDataString = async (req, res, next) => {
     req.on( 'end', async function() {
       req.json = await JSON.parse( dataString )
       console.log(req.json)
-      console.log("Before next(): " + req.json.username)
-      req.json.grade = await gradeScore(req.json.score)
-      
+      if( req.url != "/login"){
+        req.json.grade = await gradeScore(req.json.score)
+      }
       next()
     })
 
@@ -127,25 +127,133 @@ const updateLeaderboard = async (req, res, next) => {
 
 const constructLeaderboard = async (req, res, next) => {
   try{
-    req.lb.sort((a, b) => b.score - a.score)
+    if(req.url != "/login"){
+      req.lb.sort((a, b) => b.score - a.score)
 
-    // Table header line
-    lb = "<tr id=lbhead><th>Rank</th><th>Player</th><th>Score</th><th>Grade</th><th>Combo</th><th>Complete</th></tr>"
-    // Convert each entry into HTML table text
-    for(let i = 0; i < req.lb.length; i++){
-      e = req.lb[i]
-      lb += "<tr><td>" +
-            (i+1) + "</td><td>" +
-            e.username + "</td><td>" +
-            e.score + "</td><td>" +
-            e.grade + "</td><td>" +
-            e.combo + "</td><td>" +
-            e.complete +
-            "</td></tr>"
+      // Table header line
+      lb = "<tr id=lbhead><th>Rank</th><th>Player</th><th>Score</th><th>Grade</th><th>Combo</th><th>Complete</th></tr>"
+      // Convert each entry into HTML table text
+      for(let i = 0; i < req.lb.length; i++){
+        e = req.lb[i]
+        lb += "<tr><td>" +
+              (i+1) + "</td><td>" +
+              e.username + "</td><td>" +
+              e.score + "</td><td>" +
+              e.grade + "</td><td>" +
+              e.combo + "</td><td>" +
+              e.complete +
+              "</td></tr>"
+      }
+      res.write(lb)
     }
-    res.write(lb)
   } finally {
     await client.close()
+    next()
+  }
+}
+
+const loginUser = async (req, res, next) => {
+  if(req.url == "/login"){
+    json = {
+      username: req.json.username,
+      password: req.json.password
+    }
+    let foundEntry = false
+    for(let i = 0 ; i < req.lb.length; i++){
+      if(req.lb[i].username == req.json.username){
+        foundEntry = true
+        if(req.lb[i].password == req.json.password){
+          json.success = true
+          userScore = req.lb[i].score
+          userCombo = req.lb[i].combo
+          userComplete = req.lb[i].complete
+          json.newForms = `<form id="entryForm">
+            <label for="score">Score</label>
+            <input type="number" id="score" value="0" min="0" max="1000000">
+            <br>
+            <label for="combo">Max Combo</label>
+            <input type="number" id="combo" value="0" min="0" max="1000">
+            <br>
+            <br></br>
+            <input type="radio" id="am" name="completion" value="All Marvelous" `
+          if(userComplete == "All Marvelous"){
+            json.newForms += `checked`
+          }
+          json.newForms += `>
+            <label for="am">All Marvelous</label>
+            <br>
+            <input type="radio" id="fc" name="completion" value="Full Combo"`
+          if(userComplete == "Full Combo"){
+            json.newForms += `checked`
+          }
+          json.newForms += `>
+            <label for="fc">Full Combo</label>
+            <br>
+            <input type="radio" id="ml" name="completion" value="Missless"`
+          if(userComplete == "Missless"){
+            json.newForms += `checked`
+          }
+          json.newForms += `>
+            <label for="ml">Missless</label>
+            <br>
+            <input type="radio" id="cl" name="completion" value="Clear"`
+          if(userComplete == "Clear"){
+            json.newForms += `checked`
+          }
+          json.newForms += `>
+            <label for="cl">Clear</label>
+            <br>
+            <input type="radio" id="nc" name="completion" value="Not Clear"`
+          if(userComplete == "Not Clear"){
+            json.newForms += `checked`
+          }
+          json.newForms += `>
+            <label for="nc">Not Clear</label>
+            <br><br>
+            <button id="entrybutton">Submit</button>
+            <button id="deletebutton">Delete</button>
+          </form>`
+          res.write(JSON.stringify(json))
+          next()
+        } else {
+          console.log("Incorrect Password!")
+          json.success = false
+          next()
+        }
+      }
+    }
+    if(!foundEntry){
+      json.success = true
+      json.newForms += `<form id="entryForm">
+            <label for="score">Score</label>
+            <input type="number" id="score" value="0" min="0" max="1000000">
+            <br>
+            <label for="combo">Max Combo</label>
+            <input type="number" id="combo" value="0" min="0" max="1000">
+            <br>
+            <br>
+            <input type="radio" id="am" name="completion" value="All Marvelous">
+            <label for="am">All Marvelous</label>
+            <br>
+            <input type="radio" id="fc" name="completion" value="Full Combo">
+            <label for="fc">Full Combo</label>
+            <br>
+            <input type="radio" id="ml" name="completion" value="Missless">
+            <label for="ml">Missless</label>
+            <br>
+            <input type="radio" id="cl" name="completion" value="Clear">
+            <label for="cl">Clear</label>
+            <br>
+            <input type="radio" id="nc" name="completion" value="Not Clear">
+            <label for="nc">Not Clear</label>
+            <br><br>
+            <button id="entrybutton">Submit</button>
+            <button id="deletebutton">Delete</button>
+          </form>`
+      res.write(JSON.stringify(json))
+      next()
+    }
+  } else {
     next()
   }
 }
@@ -154,6 +262,7 @@ app.use(start_connection)
 app.use(getDataString)
 app.use(updateLeaderboard)
 app.use(constructLeaderboard)
+app.use(loginUser)
 
 app.post("/entry", async ( req, res ) => {
   res.end()
@@ -164,6 +273,10 @@ app.post("/delete", async (req, res) => {
 })
 
 app.get("/load", async ( req, res ) => {
+  res.end()
+})
+
+app.post("/login", async (req, res) => {
   res.end()
 })
 

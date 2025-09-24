@@ -23,54 +23,23 @@
           This particular example would be for a level with a maximum combo of 1000.
         </p>
       </div>
-      <div class="forms">
+      <div class="forms" id="formBox">
         <div class="form">
-          <h2>Create/Edit Entry</h2>
-          <p>Input your username, score, combo, and accuracy.<br>
-          Set a password to update or delete your entry later!</p>
-          <form id="entryForm">
-            <label for="eusername">Username</label>
-            <input type="text" id="eusername">
+          <h2>Log In</h2>
+          <p>Input a username and password to enter your score into the leaderboard.
+            If you do not have an account, a new one will be made for you.
+          </p>
+          <form id="loginForm">
+            <label for="lusername">Username</label>
+            <input type="text" id="lusername">
             <br>
-            <label for="epassword">Password</label>
-            <input type="password" id="epassword">
-            <br>
-            <label for="score">Score</label>
-            <input type="number" id="score" value="0" min="0" max="1000000">
-            <br>
-            <label for="combo">Max Combo</label>
-            <input type="number" id="combo" value="0" min="0" max="1000">
+            <label for="lpassword">Password</label>
+            <input type="password" id="lpassword">
             <br>
             <br>
-            <input type="radio" id="am" name="completion" value="All Marvelous">
-            <label for="AM">All Marvelous</label>
-            <input type="radio" id="fc" name="completion" value="Full Combo">
-            <label for="FC">Full Combo</label>
-            <input type="radio" id="ml" name="completion" value="Missless">
-            <label for="ML">Missless</label>
-            <input type="radio" id="cl" name="completion" value="Clear">
-            <label for="CL">Clear</label>
-            <input type="radio" id="nc" name="completion" value="Not Clear">
-            <label for="NC">Not Clear</label>
-            <br><br>
-            <button id="entrybutton">Submit</button>
+            <button id="loginbutton">Log In</button>
           </form>
         </div>
-          <br>
-          <div class="form">
-            <h2>Delete Entry</h2>
-            <p>Input the username of the entry to delete.<br>
-            You cannot delete an entry without that user's password!</p>
-            <form>
-              <label for="dusername">Username</label>
-              <input type="text" id="dusername">
-              <br>
-              <label for="dpassword">Password</label>
-              <input type="password" id="dpassword">
-              <br><br>
-              <button id="deletebutton">Submit</button>
-            </form>
-          </div>
       </div>
       <div class="leaderboard">
         <table id="leaderboard">

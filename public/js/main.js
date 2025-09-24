@@ -1,5 +1,8 @@
 // FRONT-END (CLIENT) JAVASCRIPT HERE
 
+let servingUsername = ""
+let servingPassword = ""
+
 const submit = async function( event ) {
   // stop form submission from trying to load
   // a new .html page for displaying results...
@@ -8,13 +11,11 @@ const submit = async function( event ) {
   event.preventDefault()
   
   // get the data from each entry form
-  const uninput = document.querySelector( "#eusername" ),
-        pwdinput = document.querySelector( '#epassword' ),
-        scoreinput = document.querySelector( '#score' ),
+  const scoreinput = document.querySelector( '#score' ),
         comboinput = document.querySelector( '#combo' ),
         completeinput = document.querySelector('#entryForm').elements["completion"],
-        json = { username: uninput.value, 
-                 password: pwdinput.value, 
+        json = { username: servingUsername, 
+                 password: servingPassword, 
                  score: scoreinput.value,
                  combo: comboinput.value,
                  complete: completeinput.value
@@ -39,10 +40,8 @@ const remove = async function( event ) {
   event.preventDefault()
 
   // collect data from relevant inputs
-  const uninput = document.querySelector( '#dusername' ),
-        pwdinput = document.querySelector( '#dpassword' ),
-        json = { username: uninput.value,
-                 password: pwdinput.value
+  const json = { username: servingUsername,
+                 password: servingPassword
         },
         body = JSON.stringify( json )
 
@@ -54,8 +53,6 @@ const remove = async function( event ) {
   const text = await response.text()
 
   document.querySelector("#leaderboard").innerHTML = text
-
-  console.log( "text:", text )
 }
 
 // Loads the table without attempting to change it
@@ -76,11 +73,47 @@ const loadTable = async function( event ) {
   document.querySelector("#leaderboard").innerHTML = text
 }
 
-window.onload = function() {
-   const entrybutton = document.querySelector("#entrybutton"),
-         deletebutton = document.querySelector("#deletebutton");
-         loadbutton = document.querySelector("#loadbutton");
+const login = async function ( event ) {
+  event.preventDefault()
+
+  const uninput = document.querySelector( '#lusername' ),
+        pwdinput = document.querySelector( '#lpassword' ),
+        json = { username: uninput.value,
+                 password: pwdinput.value
+        },
+        body = JSON.stringify( json )
+  
+  console.log("Going to log in!")
+  const respose = await fetch ( "/login", {
+    method:"POST",
+    body
+  })
+
+  const text = await response.text()
+  json = JSON.parse(text)
+
+  if(json.success) {
+    document.querySelector("#formBox").innerHTML = json.newForms
+    await newListeners()
+    servingUsername = json.username
+    servingPassword = json.password
+  } else {
+    console.log("Log in failed!")
+  }
+
+}
+
+const newListeners = function () {
+  const entrybutton = document.querySelector("#entrybutton"),
+        deletebutton = document.querySelector("#deletebutton");
+        
   entrybutton.onclick = submit;
   deletebutton.onclick = remove;
+}
+
+window.onload = function() {
+  const loginbutton = this.document.querySelector("#loginbutton"),
+        loadbutton = document.querySelector("#loadbutton");
+  loginbutton.onclick = login;
   loadbutton.onclick = loadTable;
 }
