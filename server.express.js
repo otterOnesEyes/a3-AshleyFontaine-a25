@@ -12,18 +12,9 @@ const client = new MongoClient(uri, {
   }
 });
 
-
-
 app.use( express.static( 'public' ) )
 
-const middleware_post = async (req, res, next) => {
-
-  if(req.method === 'POST'){
-    await updateLeaderboard(req)
-  }
-
-  console.log(req)
-
+const start_connection = async (req, res, next) => {
   await client.connect(
     err => {
       console.log("err :", err);
@@ -31,133 +22,112 @@ const middleware_post = async (req, res, next) => {
     }
   );  
 
-  res.writeHead( 200, { 'Content-Type': 'application/json'})
+  db = await client.db("lb")
+  console.log("db found")
+  collection = await db.collection("entries");
+  console.log("collection found")
+  leaderboard = await collection.find().toArray()
 
-  await constructLeaderboard(client)
+  req.lb = leaderboard
+
+  res.writeHead( 200, { 'Content-Type': 'application/json'})
 
   next()
 }
 
-const updateLeaderboard = (req) => {
-  try{
-    if(req.method === 'POST'){
-      console.log("Post request received")
-      let dataString = ''
+const getDataString = async (req, res, next) => {
+  if(req.method === 'POST'){
+    console.log("Post request received")
+    let dataString = ''
 
-      req.on( 'data', function( data ) {
-        dataString += data 
-      })
+    req.on( 'data', function( data ) {
+      dataString += data 
+    })
 
-      req.on( 'end', async function() {
-        console.log("end of data collection. going to connect")
-        await client.connect(
-          err => {
-            console.log("err :", err);
-            client.close();
-          }
-        );  
-          
-        console.log("client connected")
-
-        db = await client.db("lb")
-        console.log("db found")
-        collection = await db.collection("entries");
-        console.log("collection found")
-        leaderboard = await collection.find().toArray()
-
-        console.log("All data loaded")
-        const json = await JSON.parse( dataString )
-        json.grade = await gradeScore(json.score)
-
-        if(req.url === "/entry"){
-          // Search for the existing entry.
-          console.log("Going to make an entry!")
-          let foundEntry = false
-          for(let i = 0 ; i < leaderboard.length; i++){
-            if(leaderboard[i].username == json.username){
-              if(leaderboard[i].password == json.password){
-                // If player name and password match, update with new data.
-                foundEntry = true
-                await collection.updateOne(
-                  {username: json.username},
-                  { $set:{score:json.score}},
-                  { $set:{grade:json.grade}},
-                  { $set:{combo:json.combo}},
-                  { $set:{completion:json.completion}}
-                )
-                await client.close();
-              } else {
-                // If password doesn't match, cancel the whole operation
-                console.log("Incorrect Password!")
-                await client.close();
-              }
-            }
-          }
-          if(!foundEntry){
-            console.log("Going to input entry!")
-            // Create and add new entry
-            await collection.insertOne(json)
-            console.log("Uploaded to DB!")
-            await client.close();
-          }
-        } else if (req.url === "/delete"){
-          // Search for an existing entry
-          let foundEntry = false
-          for(let i = 0 ; i < leaderboard.length; i++){
-            if(leaderboard[i].username == json.username){
-              foundEntry = true
-              if(leaderboard[i].password == json.password){
-                // Remove entry if password is correct
-                await collection.deleteOne({
-                  username:json.username
-                })
-                await client.close();
-              } else {
-                console.log("Incorrect Password!")
-                await client.close();
-              }
-            }
-          }
-          if(!foundEntry){
-            console.log("User not found")
-            await client.close();
-          }
-        }
-      })
-    }
-  }
-  finally {
-    client.close()
+    req.on( 'end', async function() {
+      req.json = await JSON.parse( dataString )
+      req.json.grade = await gradeScore(json.score)
+    })
+  } else {
+    next()
   }
 }
 
-app.use(middleware_post)
+const updateLeaderboard = async (req, res, next) => {
+  let foundEntry = false
 
-app.post("/entry", async ( req, res ) => {
-    res.writeHead( 200, { 'Content-Type': 'application/json'})
-    res.end( await constructLeaderboard() )
-})
+  if(req.url === "/entry"){
+    // Search for the existing entry.
+    console.log("Going to make an entry!")
+    for(let i = 0 ; i < req.lb.length; i++){
+      if(req.lb[i].username == json.username){
+        if(req.lb[i].password == json.password){
+          // If player name and password match, update with new data.
+          foundEntry = true
+          await collection.updateOne(
+            {username: json.username},
+            { $set:{score:json.score}},
+            { $set:{grade:json.grade}},
+            { $set:{combo:json.combo}},
+            { $set:{completion:json.completion}}
+          )
+          req.lb[i].score = await req.json.score
+          req.lb[i].grade = await req.json.grade
+          req.lb[i].combo = await req.json.combo
+          req.lb[i].completion = await req.json.completion
+          next()
+        } else {
+          // If password doesn't match, cancel the whole operation
+          console.log("Incorrect Password!")
+          next()
+        }
+      }
+    }
+    if(!foundEntry){
+      console.log("Going to input entry!")
+      // Create and add new entry
+      await collection.insertOne(json)
+      await req.lb.push(json)
+      console.log("Uploaded to DB!")
+      next()
+    }
+  } else if(req.url === "/delete") {
+    // Search for an existing entry
+    let foundEntry = false
+    for(let i = 0 ; i < req.lb.length; i++){
+      if(req.lb[i].username == json.username){
+        foundEntry = true
+        if(req.lb[i].password == json.password){
+          // Remove entry if password is correct
+          await collection.deleteOne({
+            username:json.username
+          })
+          await req.lb.splice(i, 1)
+          next()
+        } else {
+          console.log("Incorrect Password!")
+          next()
+        }
+      }
+    }
+    if(!foundEntry){
+      console.log("User not found")
+      next()
+    }
+  } else {
+    next()
+  }
+}
 
-app.post("/delete", async (req, res) => {
-    res.writeHead( 200, { 'Content-Type': 'application/json'})
-    res.end( await constructLeaderboard() )
-})
-
-app.get("/load", async ( req, res ) => {
-    res.end()
-})
-
-const constructLeaderboard = async function (client) {
-  try {
-    collection = await client.db("lb").collection("entries");
-    leaderboard = await collection.find({}).toArray()
-    leaderboard.sort((a, b) => b.score - a.score)
+const constructLeaderboard = async (req, res, next) => {
+  try{
+    req.lb.sort((a, b) => b.score - a.score)
 
     // Table header line
     lb = "<tr id=lbhead><th>Rank</th><th>Player</th><th>Score</th><th>Grade</th><th>Combo</th><th>Complete</th></tr>"
     // Convert each entry into HTML table text
-    for(let i = 0; i < leaderboard.length; i++){
-      e = leaderboard[i]
+    for(let i = 0; i < req.lb.length; i++){
+      e = req.lb[i]
       lb += "<tr><td>" +
             (i+1) + "</td><td>" +
             e.username + "</td><td>" +
@@ -167,10 +137,29 @@ const constructLeaderboard = async function (client) {
             e.complete +
             "</td></tr>"
     }
+    res.write(lb)
   } finally {
+    await client.close()
+    next()
   }
-  return lb
 }
+
+app.use(start_connection)
+app.use(getDataString)
+app.use(updateLeaderboard)
+app.use(constructLeaderboard)
+
+app.post("/entry", async ( req, res ) => {
+  res.end()
+})
+
+app.post("/delete", async (req, res) => {
+  res.end()
+})
+
+app.get("/load", async ( req, res ) => {
+  res.end()
+})
 
 // Determine "completion grade" based on score
 const gradeScore = function( score ) {
