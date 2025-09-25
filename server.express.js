@@ -128,7 +128,7 @@ const constructLeaderboard = async (req, res, next) => {
       req.lb.sort((a, b) => b.score - a.score)
 
       // Table header line
-      lb = "<h3 style='font-family: 'Lexend', sans-serif; width: 100%'>Leaderboard</h3><tr id=lbhead><th>Rank</th><th>Player</th><th>Score</th><th>Grade</th><th>Combo</th><th>Complete</th></tr>"
+      lb = `<h3 style="font-family: 'Lexend', sans-serif; width: 100%">Leaderboard</h3><tr id=lbhead><th>Rank</th><th>Player</th><th>Score</th><th>Grade</th><th>Combo</th><th>Complete</th></tr>`
       // Convert each entry into HTML table text
       for(let i = 0; i < req.lb.length; i++){
         e = req.lb[i]
