@@ -65,7 +65,7 @@ button, input {
   background-color: white;
   border-color: #fdd000;
   border-style: dashed;
-  padding:4px;
+  padding:10px;
 }
 
 .container > div.forms {

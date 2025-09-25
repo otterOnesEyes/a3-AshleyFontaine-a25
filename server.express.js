@@ -168,6 +168,12 @@ const loginUser = async (req, res, next) => {
           userComplete = req.lb[i].complete
           json.newForms = `<div class="form">
           <form id="entryForm">
+            <h2>Create or Edit Entry</h2>
+            <p>If your account already exists, your stats are shown below.
+            If not, input your score, combo, and completion and submit to be added.
+            <br>
+            When logged in, you can edit your data and resubmit to change it.
+            You can also delete your score by pressing the delete button.</p>
             <label for="score">Score</label>
             <input type="number" id="score" value="` + userScore + `" min="0" max="1000000">
             <br>
@@ -194,7 +200,7 @@ const loginUser = async (req, res, next) => {
             json.newForms += `checked`
           }
           json.newForms += `>
-            <label for="ml">Missless</label>
+            <label for="ml"><abbr title="This is the semantic used for 5 or fewer misses. Nobody is sure why this was selected.">Missless</abbr></label>
             <br>
             <input type="radio" id="cl" name="completion" value="Clear"`
           if(userComplete == "Clear"){
