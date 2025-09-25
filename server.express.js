@@ -167,8 +167,8 @@ const loginUser = async (req, res, next) => {
           userCombo = req.lb[i].combo
           userComplete = req.lb[i].complete
           json.newForms = `<div class="form">
-          <form id="entryForm">
-            <h2>Create or Edit Entry</h2>
+          <form class="border border-4 border-danger bg-light p-3" id="entryForm">
+            <h2 style="font-family: 'Knewave', system-ui;">Create or Edit Entry</h2>
             <p>If your account already exists, your stats are shown below.
             If not, input your score, combo, and completion and submit to be added.
             <br>
