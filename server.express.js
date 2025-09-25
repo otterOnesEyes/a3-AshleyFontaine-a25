@@ -23,9 +23,7 @@ const start_connection = async (req, res, next) => {
   );  
 
   db = await client.db("lb")
-  console.log("db found")
   collection = await db.collection("entries");
-  console.log("collection found")
   leaderboard = await collection.find().toArray()
 
   req.lb = leaderboard
@@ -130,7 +128,7 @@ const constructLeaderboard = async (req, res, next) => {
       req.lb.sort((a, b) => b.score - a.score)
 
       // Table header line
-      lb = "<tr id=lbhead><th>Rank</th><th>Player</th><th>Score</th><th>Grade</th><th>Combo</th><th>Complete</th></tr>"
+      lb = "<h3>Leaderboard></h3><br><tr id=lbhead><th>Rank</th><th>Player</th><th>Score</th><th>Grade</th><th>Combo</th><th>Complete</th></tr>"
       // Convert each entry into HTML table text
       for(let i = 0; i < req.lb.length; i++){
         e = req.lb[i]
@@ -181,6 +179,7 @@ const loginUser = async (req, res, next) => {
             <input type="number" id="combo" value="` + userCombo + `" min="0" max="1000">
             <br>
             <br></br>
+            <p>Completion Status</p>
             <input type="radio" id="am" name="completion" value="All Marvelous" `
           if(userComplete == "All Marvelous"){
             json.newForms += `checked`
@@ -231,7 +230,14 @@ const loginUser = async (req, res, next) => {
     }
     if(!foundEntry){
       json.success = true
-      json.newForms += `<form id="entryForm">
+      json.newForms += `<div class="form">
+            <form class="border border-4 border-danger bg-light p-3" id="entryForm">
+            <h2 style="font-family: 'Knewave', system-ui;">Create or Edit Entry</h2>
+            <p>Welcome! A new account will be created for you once you submit a score.
+            Use the same username and password to log in again later.
+            <br>
+            When logged in, you can edit your data and resubmit to change it.
+            You can also delete your score by pressing the delete button.</p>
             <label for="score">Score</label>
             <input type="number" id="score" value="0" min="0" max="1000000">
             <br>
@@ -239,6 +245,7 @@ const loginUser = async (req, res, next) => {
             <input type="number" id="combo" value="0" min="0" max="1000">
             <br>
             <br>
+            <p>Completion Status</p>
             <input type="radio" id="am" name="completion" value="All Marvelous">
             <label for="am">All Marvelous</label>
             <br>
@@ -246,7 +253,7 @@ const loginUser = async (req, res, next) => {
             <label for="fc">Full Combo</label>
             <br>
             <input type="radio" id="ml" name="completion" value="Missless">
-            <label for="ml">Missless</label>
+            <label for="ml"><abbr title="This is the semantic used for 5 or fewer misses. Nobody is sure why this was selected.">Missless</abbr></label>
             <br>
             <input type="radio" id="cl" name="completion" value="Clear">
             <label for="cl">Clear</label>
@@ -256,7 +263,8 @@ const loginUser = async (req, res, next) => {
             <br><br>
             <button id="entrybutton">Submit</button>
             <button id="deletebutton">Delete</button>
-          </form>`
+          </form>
+          </div>`
       res.write(JSON.stringify(json))
       next()
     }

@@ -1,7 +1,7 @@
   <!doctype html>
   <html lang="en">
     <head>
-      <title>CS4241 Assignment 2</title>
+      <title>WACCA Leaderboard Tracker</title>
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <meta name="description" content="A tracker to record player scores for the arcade rhythm game 'WACCA'. Users can input and update scores, combo counts, and completion stats.">
@@ -17,7 +17,7 @@
   <body>
     <div class="container" style="font-family: 'Lexend', sans-serif">
       <div class="text-center mt-3">
-        <h1 style="font-family: 'Knewave', system-ui;">Leaderboard Tracker for WACCA</h1><br>
+        <h1 style="font-family: 'Knewave', system-ui;">Leaderboard Tracker for</h1><img style="width: 20%" src="logo.png" alt="WACCA"><br><br>
         <p style="width: 60%; position:relative; left: 20%" id="desc">
           WACCA is an arcade rhythm game that encourages competition to see which players can
           attain the highest scores. This website allows users to enter, edit, or delete their scores
@@ -29,13 +29,14 @@
       <div class="row border-top border-4 border-warning">
         <div class="col p-2 bg-primary" id="formBox">
           <div class="border border-4 border-danger bg-light p-3">
-            <h2 style="font-family: 'Knewave', system-ui;">Log In</h2>
-            <p>Input a username and password to enter your score into the leaderboard.<br>
+            <h3 style="font-family: 'Knewave', system-ui;">Log In or Create Account</h3>
+            <p>Type in a username and password into the boxes below before making changes to the leaderboard.<br>
               If you do not have an account, a new one will be made for you.
             </p>
             <form id="loginForm">
               <label for="lusername">Username</label>
               <input type="text" id="lusername">
+              <br>
               <br>
               <label for="lpassword">Password</label>
               <input type="password" id="lpassword">
