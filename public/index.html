@@ -3,8 +3,10 @@
     <head>
       <title>CS4241 Assignment 2</title>
       <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
       <script src="js/main.js"></script>
-      <link rel="stylesheet" href="css/main.css">
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+      <!-- <link rel="stylesheet" href="css/main.css"> -->
       <link rel="preconnect" href="https://fonts.googleapis.com">
       <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
       <link href="https://fonts.googleapis.com/css2?family=Knewave&family=Lexend:wght@100..900&display=swap" rel="stylesheet">
@@ -12,10 +14,10 @@
       <link rel="icon" href="data:;base64,iVBORw0KGgo=">
     </head>
   <body>
-    <div class="container">
-      <div class="header">
-        <h1>Leaderboard Tracker for WACCA</h1><br>
-        <p id="desc">
+    <div class="container" style="font-family: 'Lexend', sans-serif">
+      <div class="text-center mt-3">
+        <h1 style="font-family: 'Knewave', system-ui;">Leaderboard Tracker for WACCA</h1><br>
+        <p style="width: 60%; position:relative; left: 20%" id="desc">
           WACCA is an arcade rhythm game that encourages competition to see which players can
           attain the highest scores. This website allows users to enter, edit, or delete their scores
           from a leaderboard.
@@ -23,29 +25,33 @@
           This particular example would be for a level with a maximum combo of 1000.
         </p>
       </div>
-      <div class="forms" id="formBox">
-        <div class="form">
-          <h2>Log In</h2>
-          <p>Input a username and password to enter your score into the leaderboard.
-            If you do not have an account, a new one will be made for you.
-          </p>
-          <form id="loginForm">
-            <label for="lusername">Username</label>
-            <input type="text" id="lusername">
-            <br>
-            <label for="lpassword">Password</label>
-            <input type="password" id="lpassword">
-            <br>
-            <br>
-            <button id="loginbutton">Log In</button>
-          </form>
+      <div class="row border-top border-4 border-warning">
+        <div class="col p-2 bg-primary" id="formBox">
+          <div class="border border-4 border-danger bg-danger-subtle p-3">
+            <h2 style="font-family: 'Knewave', system-ui;">Log In</h2>
+            <p>Input a username and password to enter your score into the leaderboard.<br>
+              If you do not have an account, a new one will be made for you.
+            </p>
+            <form id="loginForm">
+              <label for="lusername">Username</label>
+              <input type="text" id="lusername">
+              <br>
+              <label for="lpassword">Password</label>
+              <input type="password" id="lpassword">
+              <br>
+              <br>
+              <button id="loginbutton">Log In</button>
+            </form>
+          </div>
+        </div>
+        <div class="col-8" style="height: 800px">
+          <table class="p-3 w-100 text-center bg-secondary-subtle border border-4 border-secondary" id="leaderboard">
+            <tr><td><button id="loadbutton">Load Leaderboard</button></td></tr>
+          </table>
         </div>
       </div>
-      <div class="leaderboard">
-        <table id="leaderboard">
-          <tr><td><button id="loadbutton">Load Leaderboard</button></td></tr>
-        </table>
-      </div>
+      
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
   </body>
 </html>
